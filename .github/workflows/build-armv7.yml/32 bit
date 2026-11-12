@@ -1,0 +1,32 @@
+name: Build PhonePad 32-bit APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        working-directory: phone
+        run: flutter pub get
+
+      - name: Build 32-bit APK
+        working-directory: phone
+        run: flutter build apk --release --target-platform android-arm
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PhonePad-ARMv7
+          path: phone/build/app/outputs/flutter-apk/app-release.apk
